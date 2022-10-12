@@ -1,0 +1,41 @@
+server:
+  port: 8080
+spring:
+  application:
+    name: producer
+  cloud:
+    stream:
+      kafka:
+        binder:
+          auto-create-topics: false
+      bindings:
+        producerServiceEvent-out-0:
+          destination: TRADING-INFO
+          binder: event-hub-2
+
+      binders:
+
+        event-hub-2:
+          type: kafka
+          environment:
+            spring:
+              kafka:
+                bootstrap-servers: localhost:9092
+                #properties:
+                  #security:
+                    #protocol: SASL_SSL
+                  #sasl:
+                    #mechanism: PLAIN
+                    #jaas:
+                      #config: org.apache.kafka.common.security.plain.PlainLoginModule required username="$ConnectionString" password="${appconfig.sasl-producer.event-hub-endpoint}";
+
+                producer:
+                  retries: 2147483647
+                  acks: all
+                  key-serializer: org.apache.kafka.common.serialization.StringSerializer
+                  value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+management:
+  health:
+    binders:
+      enabled: true
+
